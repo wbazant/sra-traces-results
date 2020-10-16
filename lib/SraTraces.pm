@@ -17,10 +17,10 @@ sub taxonAbundancesFromPage {
 
   my $resultKbp = dataToHash(kbpFromLineages(@lineages));
 
-  my ($kbp, $percent) = @{mostAccurateKbpPercentPair(@lineages)};
+  my $kbpInOnePercent = estimateKbpInOnePercent(@lineages);
 
   for my $taxon (keys %{$result}) {
-    $resultKbp->{$taxon} //= ($result->{$taxon} * $kbp) / $percent;
+    $resultKbp->{$taxon} //= $result->{$taxon} * $kbpInOnePercent;
   }
   return $resultKbp;
 }
@@ -116,16 +116,14 @@ sub percentFromLineages {
   } @lineagesAll;
   return @data;
 }
-sub mostAccurateKbpPercentPair {
+sub estimateKbpInOnePercent {
   my @lineagesAll = @_;
-  my ($r, @rs) = sort {$b->[0] <=> $a->[0]} map {my $lineage = $_;
-    [
-      $lineage->[0]->{d}{kbp}, $lineage->[0]->{d}{percent}
-    ]
+  my @ratios = map {my $lineage = $_;
+    $lineage->[0]->{d}{kbp} / $lineage->[0]->{d}{percent}
   } grep {my $lineage = $_;
-   $lineage->[0]->{d}{kbp} 
+   $lineage->[0]->{d}{kbp} && $lineage->[0]->{d}{percent} > 0 
   }@lineagesAll;
-  return $r;
+  return sum(@ratios) / scalar @ratios;
 
 }
 

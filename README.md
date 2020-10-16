@@ -8,14 +8,15 @@ This script downloads it from pages like `https://trace.ncbi.nlm.nih.gov/Traces/
 Requires Perl (tested on version v5.26.1) and core modules. Should work for other perls too, but you might need to install something.
 
 ## Usage
-To get the most abundant data for which percentage data is available:
+There's a bit of an issue with the scraping, because the data is not given in one unit - below 0.01% are given as kbp, above (some) percent without kbp. 
+
+To get the data for which percentage data is available:
 ```
  perl bin/getTaxaForStudy.pl PRJNA525604 0 
 
 ```
 
-Get the data given in kilobases - approximates % to kbp for the larger values, where only % is given:
-
+Get the data and attempt to convert it to kbp - approximates the ratio by taking an average ratio for where the values are available:
 ```
  perl bin/getTaxaForStudy.pl PRJNA525604 1 
 ```
