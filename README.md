@@ -9,18 +9,20 @@ See the [STAT documentation page](https://www.ncbi.nlm.nih.gov/sra/docs/sra-taxo
 
 This program looks up a list of runs for a study, and then downloads the STAT results from pages like [this SRR8668755 results page](https://trace.ncbi.nlm.nih.gov/Traces/sra/?run=SRR8668755) by reading the HTML.
 
-It recalculates the data from the aggregates at each taxonomic level, to partial sums, so that the values add up to the percentage of mapped reads.
-Outputs are available as % - filtered at 0.01% and above - and as kbp, with all data.
+It recalculates the data from the aggregates at each taxonomic level, to partial sums, so that the values add up to the fraction of mapped reads.
+Outputs are available as fractions - filtered at 0.0001 and above - and as kbp, with all data.
 
 It then formats it as a table in TSV format - rows labelled by taxa, columns are different samples.
 
 
 ## Install
-Requires Perl (tested on version v5.26.1) and core modules. Should work for other perls too, but you might need to install something.
+Requires Perl (tested on version v5.26.1) and modules that I think should be included in any perl installation.
+
+Should work for other perls too, but you might need to install something.
 
 ## Usage
 
-To get the data for which percentage data is available:
+To get the data as fractions, for which percentage data is available:
 ```
  perl bin/getTaxaForStudy.pl PRJNA525604 0 
 

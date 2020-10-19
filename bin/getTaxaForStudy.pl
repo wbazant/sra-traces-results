@@ -31,7 +31,7 @@ say join "\t", "", @runs;
 
 sub fmt {
   my ($num, $doRareTaxa) = @_;
-  my $f = $doRareTaxa ? "%d" : "%.2f";
+  my $f = $doRareTaxa ? "%d" : "%.4f";
   return $num ? sprintf($f, $num) : "";
 }
 for my $taxon (sort keys %allAbundances){

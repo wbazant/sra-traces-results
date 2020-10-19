@@ -1,10 +1,8 @@
 #! /usr/bin/env perl
 use strict;
 use warnings;
-use feature 'say';
 use List::Util qw/sum/;
 use JSON;
-use YAML;
 
 sub taxonAbundancesFromPage {
   my ($path, $doKbp) = @_;
@@ -12,15 +10,15 @@ sub taxonAbundancesFromPage {
 
   my @lineages = assembleNodesIntoLineages(@nodes);
 
-  my $result = dataToHash(percentFromLineages(@lineages));
-  return $result unless $doKbp;
+  my $resultFraction = dataToHash(fractionFromLineages(@lineages));
+  return $resultFraction unless $doKbp;
 
   my $resultKbp = dataToHash(kbpFromLineages(@lineages));
 
-  my $kbpInOnePercent = estimateKbpInOnePercent(@lineages);
+  my $kbpTotal = 100 * estimateKbpInOnePercent(@lineages);
 
-  for my $taxon (keys %{$result}) {
-    $resultKbp->{$taxon} //= $result->{$taxon} * $kbpInOnePercent;
+  for my $taxon (keys %{$resultFraction}) {
+    $resultKbp->{$taxon} //= $resultFraction->{$taxon} * $kbpTotal;
   }
   return $resultKbp;
 }
@@ -91,7 +89,7 @@ sub assembleNodesIntoLineages{
       }
     }
     unless(keys %nodesAdded){
-      die Dump \@nodes, \@lineages;
+      die "Error: the input doesn't seem right";# use YAML; die Dump \@nodes, \@lineages;
     }
     @lineages = @nextLineages;
     @nodes = grep { not $nodesAdded{$_->{n}}} @nodes;
@@ -105,13 +103,13 @@ sub isSubTaxon {
 }
 
 
-sub percentFromLineages {
+sub fractionFromLineages {
   my @lineagesAll = @_;
   my @data = map {my $lineage = $_;
     [
       join(";", reverse map {$_->{d}{name}}@{$lineage}),
       $lineage->[0]->{d}{name},
-      $lineage->[0]->{d}{percent}
+      $lineage->[0]->{d}{percent} / 100
     ]
   } @lineagesAll;
   return @data;
