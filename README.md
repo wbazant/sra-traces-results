@@ -22,16 +22,16 @@ Should work for other perls too, but you might need to install something.
 
 ## Usage
 
-To get the data as fractions, for which percentage data is available:
 ```
- perl bin/getTaxaForStudy.pl PRJNA525604 0 
+perl bin/getTaxaForStudy.pl --study PRJNA525604
+```
+will retrieve all runs for the study.
 
-```
+You can also list run IDs with `--runIds` or put them in a file and add `--runsPath`.
 
-Get the data and attempt to convert it to kbp - approximates the ratio by taking an average ratio for where the values are available:
-```
- perl bin/getTaxaForStudy.pl PRJNA525604 1 
-```
+By default the program reports the data as fractions wherever the percentage data is available. You can `--includeRareTaxa` to include everything, and report it in kbp.
+
+The program will approximate the ratio between % and kbp by taking an average ratio for where both values are available.
 
 ### Caveats
 The program could stop working if the format of the pages change.
