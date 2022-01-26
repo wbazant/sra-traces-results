@@ -15,15 +15,17 @@ my $study;
 my $runIdsString;
 my $runsPath;
 my $includeRareTaxa = 0;
+my $doTotals = 0;
 
 sub usage {
-  die join(" ", @_, "Usage: $0 [--study studyAccession] [--runIds r1,r2,r3 ] [--runsPath runs.tsv] [--includeRareTaxa]"); 
+  die join(" ", @_, "Usage: $0 [--study studyAccession] [--runIds r1,r2,r3 ] [--runsPath runs.tsv] [--includeRareTaxa] [--doTotals]"); 
 }
 GetOptions (
   "study=s" => \$study,
   "runIds=s" => \$runIdsString,
   "runsPath=s" => \$runsPath,
   "includeRareTaxa" => \$includeRareTaxa,
+  "doTotals" => \$doTotals,
 ) or die("Error in command line arguments\n");
 
 my @runs;
@@ -45,7 +47,7 @@ my %allAbundances;
 
 for my $run (@runs){
   my $page = get("https://trace.ncbi.nlm.nih.gov/Traces/sra/?run=$run");
-  my $taxonAbundances = taxonAbundancesFromPage($page, $includeRareTaxa);
+  my $taxonAbundances = taxonAbundancesFromPage($page, $includeRareTaxa, $doTotals);
   for my $taxon (keys %{$taxonAbundances}){
      $allAbundances{$taxon}{$run} = $taxonAbundances->{$taxon};
   }

@@ -5,10 +5,13 @@ use List::Util qw/sum/;
 use JSON;
 
 sub taxonAbundancesFromPage {
-  my ($path, $doKbp) = @_;
+  my ($path, $doKbp, $doTotals) = @_;
   my @nodes = extractNodesFromTracesPage($path);
 
   my @lineages = assembleNodesIntoLineages(@nodes);
+  if ($doTotals){
+    return dataToHashTotals(fractionFromLineages(@lineages));
+  }
 
   my $resultFraction = dataToHash(fractionFromLineages(@lineages));
   return $resultFraction unless $doKbp;
@@ -151,6 +154,16 @@ sub dataToHash {
       } @moreSpecificTaxa;
       $abundance = $abundance - sum (map {$_->[2]} @children);
     }
+    next unless $abundance > 0;
+    $result{$string} = $abundance;
+  }
+  return \%result;
+}
+sub dataToHashTotals {
+  my @data = @_;
+  my %result;
+  for my $t (@data){
+    my ($string, $name, $abundance) = @$t;
     next unless $abundance > 0;
     $result{$string} = $abundance;
   }
